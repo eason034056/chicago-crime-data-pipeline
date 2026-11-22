@@ -1,0 +1,35 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.Python
+.DS_Store
+
+# Snowflake key. Never commit this.
+include/rsa_key.p8
+*.p8
+*.pem
+
+# dbt
+target/
+dbt_packages/
+logs/
+.user.yml
+
+# Astro / Airflow local runtime
+.astro/
+airflow_settings.yaml
+airflow.db
+airflow.cfg
+unittests.cfg
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Spoken notes for the submission video. Not part of the repo.
+recording-script.md
+
+# Video
+demo_video.mov
+

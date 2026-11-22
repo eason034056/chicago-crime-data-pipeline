@@ -1,0 +1,32 @@
+name: chicago_crime
+version: "1.0.0"
+config-version: 2
+
+profile: chicago_crime
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - target
+  - dbt_packages
+
+# Staging is a view: it is a cleaned query on top of raw, rebuilt every time it is selected.
+# Marts are tables: the dashboard reads them often, so the result is stored.
+seeds:
+  chicago_crime:
+    police_districts:
+      +column_types:
+        district: varchar(3)
+        district_name: varchar(64)
+
+models:
+  chicago_crime:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

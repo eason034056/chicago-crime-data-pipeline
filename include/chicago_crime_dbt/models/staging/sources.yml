@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: chicago_crime
+    description: "Crime reports landed by the Python loader. Text only, one current row per report id."
+    database: "{{ env_var('SNOWFLAKE_DATABASE') }}"
+    schema: RAW
+    tables:
+      - name: crimes
+        description: "Raw Chicago Data Portal crime reports. The API field date is stored as crime_date."
+        columns:
+          - name: id
+            description: "Portal report id. Primary key of the raw table."
+            tests:
+              - unique
+              - not_null

@@ -1,0 +1,103 @@
+version: 2
+
+models:
+  - name: dim_dates
+    description: "Calendar dimension. One row per day from 2025-01-01 through the latest report, including days with no reports."
+    columns:
+      - name: date
+        description: "Calendar date. Primary key."
+        tests:
+          - unique
+          - not_null
+      - name: quarter
+        description: "Calendar quarter, 1 through 4."
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4]
+      - name: day_of_week_num
+        description: "ISO weekday. Monday is 1 and Sunday is 7."
+      - name: is_weekend
+        description: "True on Saturday and Sunday."
+
+  - name: dim_offenses
+    description: "Offense dimension. One row per IUCR code, plus UNKNOWN."
+    columns:
+      - name: offense_code
+        description: "IUCR code. Primary key."
+        tests:
+          - unique
+          - not_null
+      - name: primary_type
+        description: "Offense category used by the dashboard filter."
+        tests:
+          - not_null
+
+  - name: dim_districts
+    description: "Police-district dimension. One row per district code found in the reports."
+    columns:
+      - name: district
+        description: "Zero-padded district code. Primary key."
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_crimes
+    description: "Crime-report fact. Grain is one row per report. Clustered by occurred_date."
+    columns:
+      - name: crime_id
+        description: "Report id. Primary key."
+        tests:
+          - unique
+          - not_null
+      - name: occurred_date
+        description: "Date the report says the crime occurred. Foreign key to dim_dates.date."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: date
+      - name: offense_code
+        description: "IUCR code. Foreign key to dim_offenses.offense_code."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_offenses')
+                field: offense_code
+      - name: district
+        description: "Police district. Foreign key to dim_districts.district. Null when the report has no district."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_districts')
+                field: district
+      - name: was_arrest
+        description: "True when the report recorded an arrest."
+        tests:
+          - not_null
+
+  - name: mart_daily_crime
+    description: "Dashboard mart. One row per date, primary type, and district."
+    columns:
+      - name: occurred_date
+        description: "Date of the aggregated reports."
+        tests:
+          - not_null
+      - name: primary_type
+        description: "Offense category."
+        tests:
+          - not_null
+      - name: crime_count
+        description: "Number of reports in this date, type, and district."
+        tests:
+          - not_null
+      - name: arrest_count
+        description: "Reports in the group with an arrest."
+        tests:
+          - not_null
+      - name: domestic_count
+        description: "Reports in the group flagged domestic."
+        tests:
+          - not_null

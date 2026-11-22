@@ -1,0 +1,6 @@
+pandas>=2.2
+pyarrow>=18
+requests>=2.32
+dbt-core==1.12.7
+dbt-snowflake==1.12.5
+python-dotenv>=1.0

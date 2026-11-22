@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: stg_chicago_crimes
+    description: "Typed crime reports. One row per report id. Coordinates outside the Chicago bounding box are null."
+    columns:
+      - name: crime_id
+        description: "Chicago Data Portal report id. Primary key."
+        tests:
+          - unique
+          - not_null
+      - name: occurred_date
+        description: "Calendar date the report says the crime occurred."
+        tests:
+          - not_null
+      - name: offense_code
+        description: "IUCR code. UNKNOWN when the portal row has no IUCR."
+        tests:
+          - not_null
+      - name: primary_type
+        description: "Offense category, for example THEFT or BATTERY."
+      - name: was_arrest
+        description: "True when the report has an arrest. A missing flag is stored as false."
+        tests:
+          - not_null
+      - name: is_domestic
+        description: "True when the report is flagged domestic. A missing flag is stored as false."
+        tests:
+          - not_null
+      - name: district
+        description: "Chicago Police district, zero-padded to 3 characters."
